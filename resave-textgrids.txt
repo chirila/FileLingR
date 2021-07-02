@@ -1,0 +1,39 @@
+## resave-textgrids.txt
+         ##
+## This script takes a set of textgrids, opens them, and saves them again. 
+## It's to fix an issue with files 
+
+form Make text file from an IntervalTier in the selected TextGrid object
+	comment Directory of TextGrids: (Note: Include final slash in directories)
+	comment e.g. Mac: /User/docs/filedirectory/	PC: C:\Users\user\filedirectory\
+	text path_in /Users/clb3/archiveaudit/jc1MFA/
+	comment Directory to save chopped up sound files:
+	text path_out /Users/clb3/archiveaudit/jc1MFA2/
+endform
+
+overwrite = 0
+
+# text grids
+ 	Create Strings as file list... filelist 'path_in$'*.TextGrid
+
+# select each file from the textgrid string to work on one at a time
+	number_of_files = Get number of strings
+
+ 	for t from 1 to number_of_files
+		select Strings filelist
+		current_file$ = Get string... t
+
+# open the text grid 
+		Read from file... 'path_in$''current_file$'
+		object_name$ = selected$ ("TextGrid")
+
+# make the new TextGrid
+
+		select TextGrid 'object_name$'
+		Write to text file... 'path_out$''object_name$'.TextGrid
+		Remove
+			endif
+
+	endfor
+select Strings filelist
+Remove
