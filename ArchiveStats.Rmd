@@ -1,0 +1,365 @@
+---
+title: "CheckR: A User-Friendly Collection Validation Script for Depositors and Users"
+author: "Irene Yi, Claire Bowern"
+date: "9/3/2022"
+output: word_document
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Readme:
+Hi! Welcome to `CheckR:` A User-Friendly Collection Validation Script for Depositors and Users. This tool is designed to function as a sanity check for depositors and users of digital language collections. We have included comments (noted by a "#" symbol in front of the associated comment line) to help you understand the function of each part of the code, as well as be able to edit the lines of code in very simple ways to choose what functions' outputs you do or do not want to see in a given run of the code.
+
+
+First, set the fileroot - that's the folder that you want to analyze:
+
+```{r}
+
+```
+
+
+This sets up the knitr
+
+```{r setup}
+fileroot = c("/Users/clb3/archiveaudit")
+
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org"
+       options(repos=r)})
+knitr::opts_knit$set(root.dir = fileroot)
+```
+
+
+**The first time you use this code, RUN this section of the code before doing anything else; this will ensure that you have all the packages you need to run the rest of the code.**
+
+
+```{r eval=FALSE}
+install.packages("plyr")
+install.packages("magrittr") # package installations are only needed the first time you use it
+install.packages("dplyr")    # alternative installation of the %>%
+install.packages("reticulate")
+install.packages("devtools")
+devtools::install_github("dalejbarr/elan", force = TRUE)
+install.packages("tools")
+install.packages("xfun")
+```
+
+
+```{r}
+#if packages are already installed, you can just run this chunk before you run the following parts of the code
+library(plyr)
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr) 
+library(reticulate)
+library(devtools)
+library(tools)
+library(xfun)
+```
+
+This block of code reads in your collection and gets a list of all of your files, as well as the directories/file paths (for purposes of reading files into code, or for locating where in subfolders files exist). Your "fileroot" will be your file path to your collection folder. In this example, it is `/Users/ireneyi/Downloads/toyfiles` because the example collection I am using, a folder called "toyfiles", is located in my computer's downloads folder. You will replace the part within the quotes " " with your own file path. Note that if you are using a Windows computer, you'll need to use something like `c:\\users\ireneyi\Downloads`.
+
+```{r}
+
+files = list.files(path = fileroot, pattern = NULL, all.files = FALSE,
+           full.names = FALSE, recursive = TRUE,
+           ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+
+#If you want to see ALL of your files listed out, delete the "#" in front of this next line of code:
+#files
+
+directories = list.dirs(fileroot, recursive = TRUE, full.names = FALSE)
+directories
+```
+
+This next block of code counts the total number of files within your collection, lists every single type of file extension present in your collection, and counts the number of files that have each type of file extension.
+
+```{r}
+file_exts <- c()
+for (val in files) {
+  ext <- file_ext(toString(val))
+  file_exts <- append(file_exts, ext)
+}
+df <- data.frame(file_exts)
+
+tot_num_files <- length(file_exts)
+sprintf("You have %d total files in your entire collection.", tot_num_files)
+
+print("Here is a table with every type of file extension that exists in your collection, along with how many files have each extensions (for example, if it says '226' under 'pfs', it means you have 226 files with the .pfs extension):")
+tab_with_group <- table(df$file_exts) 
+tab_with_group
+```
+
+This next part of the script will count (and optionally list out) all the .eaf (Elan) files in your collection.
+
+```{r}
+fnames_eaf <- list.files(fileroot, pattern = "\\.eaf$", full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
+
+x1 <- length(fnames_eaf)
+sprintf("You have %d total .eaf files.", x1)
+
+#If you want to see ALL of your eaf files listed out, delete the "#" in front of this next line of code:
+fnames_eaf
+```
+
+The next block of code checks to see how many .eaf files are missing corresponding audio files (in the form of .wav or .mp4).
+
+```{r}
+#check eaf files to see if they have matching audio files
+missing_audio <- c()
+with_audio <- c()
+for (j in fnames_eaf) {
+  subDir <- j
+  semi_subDir <- sans_ext(subDir)
+  lowercase_subDir <- with_ext(semi_subDir, ".wav")
+  uppercase_subDir <- with_ext(semi_subDir, ".WAV")
+  mp4_lower_subDir <- with_ext(semi_subDir, ".mp4")
+  mp4_upper_subDir <- with_ext(semi_subDir, ".MP4")
+  
+  if (file.exists(lowercase_subDir) || file.exists(uppercase_subDir) || file.exists(mp4_lower_subDir) || file.exists(mp4_upper_subDir)){
+      with_audio <- append(with_audio, subDir)
+  } else {
+      missing_audio <- append(missing_audio, subDir)
+  }
+}
+
+num_missing_audio <- length(missing_audio)
+sprintf("You have %d .eaf files in your collection that are missing corresponding audio files.", num_missing_audio)
+
+#If you want to see the names of ALL of your eaf files that are MISSING audio files, delete the "#" in front of this next line of code:
+missing_audio
+
+
+num_with_audio <- length(with_audio)
+sprintf("You have %d .eaf files in your collection that have corresponding audio files.", num_with_audio)
+
+
+#If you want to see the names of ALL of your eaf files that HAVE audio files, delete the "#" in front of this next line of code:
+with_audio
+```
+
+The next block of code checks to see how many .eaf files are missing corresponding settings files (either in .pfs or .pfsx file formats).
+
+```{r}
+#check eaf files to see if they have matching settings files
+missing_settings <- c()
+with_settings <- c()
+for (j in fnames_eaf) {
+  subDir <- j
+  semi_subDir <- sans_ext(subDir)
+  lowercase_subDir <- with_ext(semi_subDir, ".pfs")
+  uppercase_subDir <- with_ext(semi_subDir, ".PFS")
+  pfsx_lower_subDir <- with_ext(semi_subDir, ".pfsx")
+  pfsx_upper_subDir <- with_ext(semi_subDir, ".PFSX")
+  
+  if (file.exists(lowercase_subDir) || file.exists(uppercase_subDir) || file.exists(pfsx_lower_subDir) || file.exists(pfsx_upper_subDir)){
+      with_settings <- append(with_settings, subDir)
+  } else {
+      missing_settings <- append(missing_settings, subDir)
+  }
+}
+
+num_missing_settings <- length(missing_settings)
+sprintf("You have %d .eaf files in your collection that are missing corresponding settings files.", num_missing_settings)
+
+
+#If you want to see the names of ALL of your eaf files that are MISSING settings files, delete the "#" in front of this next line of code:
+missing_settings
+
+num_with_settings <- length(with_settings)
+sprintf("You have %d .eaf files in your collection that have corresponding settings files.", num_with_settings)
+
+#If you want to see the names of ALL of your eaf files that HAVE settings files, delete the "#" in front of this next line of code:
+with_settings
+```
+
+The next block of code checks to see how many .eaf files are missing corresponding transcript (.txt) files.
+
+```{r}
+#check eaf files to see if they have matching transcript (.txt) files
+missing_txt <- c()
+with_txt <- c()
+for (j in fnames_eaf) {
+  subDir <- j
+  semi_subDir <- sans_ext(subDir)
+  lowercase_subDir <- with_ext(semi_subDir, ".txt")
+  uppercase_subDir <- with_ext(semi_subDir, ".TXT")
+  
+  if (file.exists(lowercase_subDir) || file.exists(uppercase_subDir)){
+      with_txt <- append(with_txt, subDir)
+  } else {
+      missing_txt <- append(missing_txt, subDir)
+  }
+}
+
+num_missing_txt <- length(missing_txt)
+sprintf("You have %d .eaf files in your collection that are missing corresponding transcript (.txt) files.", num_missing_txt)
+
+#If you want to see the names of ALL of your eaf files that are MISSING transcript (.txt) files, delete the "#" in front of this next line of code:
+missing_txt
+
+num_with_txt <- length(with_txt)
+sprintf("You have %d .eaf files in your collection that have corresponding transcript (.txt) files.", num_with_txt)
+
+
+#If you want to see the names of ALL of your eaf files that HAVE transcript (.txt) files, delete the "#" in front of this next line of code:
+with_txt
+```
+
+This next part of the script will count (and optionally list out) all the audio files in your collection. 
+
+```{r}
+fnames_audio <- list.files(fileroot, pattern = "\\.wav$|\\.mp4$", full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
+
+x2 <- length(fnames_audio)
+sprintf("You have %d total audio files.", x2)
+
+#If you want to see ALL of your eaf files listed out, delete the "#" in front of this next line of code:
+fnames_audio
+```
+
+
+The next block of code checks to see how many audio files are missing .eaf/ELAN files (in .eaf format).
+
+```{r}
+#check audio files to see if they have matching eaf files
+missing_eaf <- c()
+with_eaf <- c()
+for (j in fnames_audio) {
+  subDir <- j
+  semi_subDir <- sans_ext(subDir)
+  lowercase_subDir <- with_ext(semi_subDir, ".eaf")
+  uppercase_subDir <- with_ext(semi_subDir, ".EAF")
+  
+  if (file.exists(lowercase_subDir) || file.exists(uppercase_subDir)){
+      with_eaf <- append(with_eaf, subDir)
+  } else {
+      missing_eaf <- append(missing_eaf, subDir)
+  }
+}
+
+num_missing_eaf <- length(missing_eaf)
+sprintf("You have %d audio files in your collection that are missing corresponding ELAN (.eaf) files.", num_missing_eaf)
+
+
+#If you want to see the names of ALL of your audio files that are MISSING ELAN (.eaf) files, delete the "#" in front of this next line of code:
+missing_eaf
+
+num_with_eaf <- length(with_eaf)
+sprintf("You have %d audio files in your collection that have corresponding ELAN (.eaf) files.", num_with_eaf)
+
+#If you want to see the names of ALL of your audio files that HAVE ELAN (.eaf) files, delete the "#" in front of this next line of code:
+with_eaf
+```
+
+
+Write results to files:
+
+```{r}
+
+sink("myResults.txt")
+#print("Directories:\n")
+directories
+#print("File extensions:\n")
+tab_with_group
+
+sink()
+
+
+#List of files:
+
+sink("myFileList.txt")
+files
+sink()
+
+```
+
+
+
+The ELAN parts:
+
+CheckR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: https://github.com/dalejbarr/elan. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run, before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but CheckR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as CheckR is used as a sanity check for users and depositors of collections. For further uses of Barr's code functions, please follow the documentation from the linked Github repository.
+```{r}
+
+download.file("https://github.com/dalejbarr/elan/blob/master/R/functions.R", "dalejbarr_functions.R")
+source("dalejbarr_functions.R")
+
+
+source("https://github.com/dalejbarr/elan/blob/59cf1016fc8e43926972cabc0229ce4d36a2adb3/R/functions.R")
+```
+
+
+## Our script starts here again
+
+```{r}
+setwd(fileroot)
+
+with_audio[[1]]
+
+doc <- elanTree(with_audio[[1]])
+tiers <- readTierList(doc)
+
+ann.ali <- readAnnotations(doc)
+
+tiers %>%
+    inner_join(ann.ali, by="TIER_ID") %>% # join tiers to ann.ali
+    select(TIER_ID) %>% # only keep the TIER_ID column
+    unique # get rid of duplicates
+
+tiers %>%
+    inner_join(ann.ali, by="TIER_ID") %>%
+    group_by(TIER_ID) %>%  # form groups based on TIER_ID
+    summarize(n=n()) # count how many in each group
+
+#i <- with_audio[1]
+for (i in 1:length(with_audio[i])){
+  doc <- elanTree(with_audio[i])
+  tiers <- readTierList(doc)
+  ann.ali <- readAnnotations(doc)
+  tiers %>%
+    inner_join(ann.ali, by="TIER_ID") %>% # join tiers to ann.ali
+    select(TIER_ID) %>% # only keep the TIER_ID column
+    unique # get rid of duplicates
+
+  tiers %>%
+    inner_join(ann.ali, by="TIER_ID") %>%
+    group_by(TIER_ID) %>%  # form groups based on TIER_ID
+    summarize(n=n()) # count how many in each group
+
+ 
+ # lapply(tiers, write, paste(with_audio[[i]]), append=TRUE, ncolumns=1000)
+  
+  }
+
+```
+
+Syntax:
+
+list.files(path, pattern, all.files, full.names)
+
+Parameter:
+
+Path:  It is a character vector that contains pathname to directories.
+
+Pattern:  It is an optional regular expression. If this argument is provided then the function only returns the files that have given pattern in their name.
+
+all.files: It is a logical value. 
+
+FALSE: Only the names of visible files are returned.
+TRUE:  All file names will be returned irrespective of whether they are visible or hidden.
+full.names:  It is a logical value.
+
+TRUE: The filename also contains the full path to the directory.
+FALSE: The filename doesn’t contain the path to the directory.
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+If you want a list of all files in your folder: (prints to separate file)
+
