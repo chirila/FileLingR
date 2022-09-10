@@ -287,6 +287,8 @@ write.table(tab_with_group, file="Filetypes.txt", sep="\t")
 
 # Further Elan file statistics
 
+##Load Elan functions
+
 For this section, CheckR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: `https://github.com/dalejbarr/elan`. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but CheckR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as CheckR is used as a sanity check for users and depositors of collections. 
 
 For further uses of Barr's code functions, please follow the documentation from the linked Github repository.
@@ -303,12 +305,12 @@ source("dalejbarr_functions.R")
 ```
 
 
-## Our script starts here again
+## Parse structure of Elan files
 
 ```{r}
 setwd(fileroot)
 
-with_audio[[1]]
+#with_audio[[1]]
 
 doc <- elanTree(with_audio[[1]])
 tiers <- readTierList(doc)
@@ -340,10 +342,8 @@ for (i in 1:length(with_audio[i])){
     group_by(TIER_ID) %>%  # form groups based on TIER_ID
     summarize(n=n()) # count how many in each group
 
-  export(tiers, "tiers.csv")
+yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
  
- # lapply(tiers, write, paste(with_audio[[i]]), append=TRUE, ncolumns=1000)
-  
   }
 
 ```
