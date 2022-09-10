@@ -7,13 +7,12 @@ output: word_document
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+# Introduction
+Welcome to `CheckR:` A User-Friendly Collection Validation Script for Depositors and Users. This tool is designed to function as a sanity check for depositors and users of digital language collections. We have included comments (noted by a "#" symbol in front of the associated comment line) to help you understand the function of each part of the code, as well as be able to edit the lines of code in very simple ways to choose what functions' outputs you do or do not want to see in a given run of the code.
 
-Readme:
-Hi! Welcome to `CheckR:` A User-Friendly Collection Validation Script for Depositors and Users. This tool is designed to function as a sanity check for depositors and users of digital language collections. We have included comments (noted by a "#" symbol in front of the associated comment line) to help you understand the function of each part of the code, as well as be able to edit the lines of code in very simple ways to choose what functions' outputs you do or do not want to see in a given run of the code.
+## Setup
+First, set the `fileroot` - that's the folder that you want to analyze. This chunk also sets some R options.  Your "fileroot" will be your file path to your collection folder. In this example, it is `/Users/ireneyi/Downloads/toyfiles` because the example collection I am using, a folder called "toyfiles", is located in my computer's downloads folder. You will replace the part within the quotes " " with your own file path. Note that if you are using a Windows computer, you'll need to use something like `c:\\users\ireneyi\Downloads`.
 
-
-First, set the fileroot - that's the folder that you want to analyze - and set up the file to knit to examine the right directory.
 
 ```{r setup}
 fileroot = c("/Users/clb3/archiveaudit")
@@ -22,13 +21,15 @@ local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org"
        options(repos=r)})
 knitr::opts_knit$set(root.dir = fileroot)
+
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
 **The first time you use this code, RUN this section of the code before doing anything else; this will ensure that you have all the packages you need to run the rest of the code.** To run it, change `eval=FALSE` to read `eval=TRUE`. You only need to install the packages once.
 
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 install.packages("plyr")
 install.packages("magrittr") # package installations are only needed the first time you use it
 install.packages("dplyr")    # alternative installation of the %>%
@@ -37,10 +38,12 @@ install.packages("devtools")
 devtools::install_github("dalejbarr/elan", force = TRUE)
 install.packages("tools")
 install.packages("xfun")
+install.packages("yaml")
 ```
 
+This chunk loads the packages you'll need.
 
-```{r echo=FALSE}
+```{r}
 #if packages are already installed, you can just run this chunk before you run the following parts of the code
 library(plyr)
 library(magrittr) # needs to be run every time you start R and want to use %>%
@@ -49,13 +52,14 @@ library(reticulate)
 library(devtools)
 library(tools)
 library(xfun)
+library(yaml) #for writing to text files
 ```
 
 # Read in directory and list files
 
-This block of code reads in your collection and gets a list of all of your files, as well as the directories/file paths (for purposes of reading files into code, or for locating where in subfolders files exist). Your "fileroot" will be your file path to your collection folder. In this example, it is `/Users/ireneyi/Downloads/toyfiles` because the example collection I am using, a folder called "toyfiles", is located in my computer's downloads folder. You will replace the part within the quotes " " with your own file path. Note that if you are using a Windows computer, you'll need to use something like `c:\\users\ireneyi\Downloads`.
+This block of code reads in your collection and gets a list of all of your files, as well as the directories/file paths (for purposes of reading files into code, or for locating where in subfolders files exist).
 
-```{r echo=FALSE}
+```{r}
 
 files = list.files(path = fileroot, pattern = NULL, all.files = FALSE,
            full.names = FALSE, recursive = TRUE,
@@ -251,7 +255,8 @@ with_eaf
 ```
 
 
-Write results to files:
+# Write results to files
+This section takes all the results and writes them to text files.
 
 ```{r}
 
@@ -264,11 +269,21 @@ tab_with_group
 sink()
 
 
+l <- list(a="1", b=1, c=list(a="1", b=1))
+yaml::write_yaml(l, "list.txt")
+
 #List of files:
 
 sink("myFileList.txt")
 files
 sink()
+
+
+vectorElements <- unlist(directories)
+vectorPaths <- names(directories)
+vectorRows <- paste(vectorPaths, vectorElements)
+write.table(vectorRows, "vectorRows.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
+
 
 ```
 
@@ -327,6 +342,7 @@ for (i in 1:length(with_audio[i])){
     group_by(TIER_ID) %>%  # form groups based on TIER_ID
     summarize(n=n()) # count how many in each group
 
+  export(tiers, "tiers.csv")
  
  # lapply(tiers, write, paste(with_audio[[i]]), append=TRUE, ncolumns=1000)
   
@@ -334,32 +350,10 @@ for (i in 1:length(with_audio[i])){
 
 ```
 
-Syntax:
-
-list.files(path, pattern, all.files, full.names)
-
-Parameter:
-
-Path:  It is a character vector that contains pathname to directories.
-
-Pattern:  It is an optional regular expression. If this argument is provided then the function only returns the files that have given pattern in their name.
-
-all.files: It is a logical value. 
-
-FALSE: Only the names of visible files are returned.
-TRUE:  All file names will be returned irrespective of whether they are visible or hidden.
-full.names:  It is a logical value.
-
-TRUE: The filename also contains the full path to the directory.
-FALSE: The filename doesn’t contain the path to the directory.
 
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+# For bugs, feature requests, etc
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+Please submit issues (bug reports or requests for new features) at https://github.com/chirila/archive-audit/issues/ 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
-
-
-If you want a list of all files in your folder: (prints to separate file)
 
