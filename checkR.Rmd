@@ -15,7 +15,7 @@ First, set the `fileroot` - that's the folder that you want to analyze. This chu
 
 
 ```{r setup}
-fileroot = c("/Users/clb3/archiveaudit")
+fileroot = c("/Users/xxx/path.to.files")
 
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org"
@@ -43,7 +43,7 @@ install.packages("yaml")
 
 This chunk loads the packages you'll need.
 
-```{r}
+```{r message=FALSE}
 #if packages are already installed, you can just run this chunk before you run the following parts of the code
 library(plyr)
 library(magrittr) # needs to be run every time you start R and want to use %>%
@@ -307,28 +307,30 @@ source("dalejbarr_functions.R")
 
 ## Parse structure of Elan files
 
+This section parses the eaf files in the collection and exports a text file with their file structure.
+
 ```{r}
 setwd(fileroot)
 
 #with_audio[[1]]
 
-doc <- elanTree(with_audio[[1]])
-tiers <- readTierList(doc)
+#doc <- elanTree(with_audio[1])
+#tiers <- readTierList(doc)
 
-ann.ali <- readAnnotations(doc)
+#ann.ali <- readAnnotations(doc)
 
-tiers %>%
-    inner_join(ann.ali, by="TIER_ID") %>% # join tiers to ann.ali
-    select(TIER_ID) %>% # only keep the TIER_ID column
-    unique # get rid of duplicates
+#tiers %>%
+#    inner_join(ann.ali, by="TIER_ID") %>% # join tiers to ann.ali
+#    select(TIER_ID) %>% # only keep the TIER_ID column
+#    unique # get rid of duplicates
 
-tiers %>%
-    inner_join(ann.ali, by="TIER_ID") %>%
-    group_by(TIER_ID) %>%  # form groups based on TIER_ID
-    summarize(n=n()) # count how many in each group
+#tiers %>%
+#    inner_join(ann.ali, by="TIER_ID") %>%
+#    group_by(TIER_ID) %>%  # form groups based on TIER_ID
+#    summarize(n=n()) # count how many in each group
 
 #i <- with_audio[1]
-for (i in 1:length(with_audio[i])){
+for (i in 1:length(with_audio)){
   doc <- elanTree(with_audio[i])
   tiers <- readTierList(doc)
   ann.ali <- readAnnotations(doc)
