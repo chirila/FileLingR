@@ -92,6 +92,8 @@ tab_with_group <- table(df$file_exts)
 tab_with_group
 ```
 
+
+# Elan files
 This next part of the script will count (and optionally list out) all the .eaf (Elan) files in your collection.
 
 ```{r}
@@ -103,6 +105,8 @@ sprintf("You have %d total .eaf files.", x1)
 #If you want to see ALL of your eaf files listed out, delete the "#" in front of this next line of code:
 fnames_eaf
 ```
+
+## Missing audio files
 
 The next block of code checks to see how many .eaf files are missing corresponding audio files (in the form of .wav or .mp4).
 
@@ -140,7 +144,8 @@ sprintf("You have %d .eaf files in your collection that have corresponding audio
 with_audio
 ```
 
-The next block of code checks to see how many .eaf files are missing corresponding settings files (either in .pfs or .pfsx file formats).
+## Settings files
+The next block of code checks to see how many .eaf files are missing corresponding settings files (either in .pfs or .pfsx file formats). Note that these files are mostly cosmetic, but they di include audio/transcript offset information. If that's not archived, the link between transcripts and any offset is lost (meaning the transcripts no longer align with the audio).
 
 ```{r}
 #check eaf files to see if they have matching settings files
@@ -175,6 +180,8 @@ sprintf("You have %d .eaf files in your collection that have corresponding setti
 with_settings
 ```
 
+## Missing transcripts
+
 The next block of code checks to see how many .eaf files are missing corresponding transcript (.txt) files.
 
 ```{r}
@@ -208,6 +215,8 @@ sprintf("You have %d .eaf files in your collection that have corresponding trans
 with_txt
 ```
 
+# Audio files
+
 This next part of the script will count (and optionally list out) all the audio files in your collection. 
 
 ```{r}
@@ -220,7 +229,7 @@ sprintf("You have %d total audio files.", x2)
 fnames_audio
 ```
 
-
+## Missing audio files
 The next block of code checks to see how many audio files are missing .eaf/ELAN files (in .eaf format).
 
 ```{r}
@@ -255,43 +264,32 @@ with_eaf
 ```
 
 
-# Write results to files
-This section takes all the results and writes them to text files.
+# Export results to textfiles
+This section takes all the results and writes them to text files. The `files.txt` file gives a full list of files. The `missing_export.txt` file summarizes the eaf files that have missing audio (and vice versa), while `matched_export.txt` is a list of the files that are not missing corresponding files. The `filetypes.txt` file provides a list of the filetypes in the collection (and how many of each there are).
 
 ```{r}
 
-sink("myResults.txt")
-#print("Directories:\n")
-directories
-#print("File extensions:\n")
-tab_with_group
+yaml::write_yaml(files, "files.txt")
 
-sink()
+summary_export <- list('Directories'=directories, '\nEAF names'=fnames_eaf)
 
+missing_export <- list('\neaf files that are missing audio'=missing_audio, '\nAudio files that are issing eaf transcripts'=missing_eaf, '\neaf files that have no settings files'=missing_settings, '\neaf files that have no exported transcript (text) files'=missing_txt)
 
-l <- list(a="1", b=1, c=list(a="1", b=1))
-yaml::write_yaml(l, "list.txt")
+matched_export <- list('eaf files that have settings files'=with_settings, '\neaf files that have audio files'=with_audio, '\naudio files that have eaf files'=with_eaf, '\neaf files that have transcript txt files'=with_txt)
 
-#List of files:
-
-sink("myFileList.txt")
-files
-sink()
-
-
-vectorElements <- unlist(directories)
-vectorPaths <- names(directories)
-vectorRows <- paste(vectorPaths, vectorElements)
-write.table(vectorRows, "vectorRows.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
-
+yaml::write_yaml(summary_export, "summary_export.txt")
+yaml::write_yaml(matched_export, "matched_export.txt")
+yaml::write_yaml(missing_export, "missing_export.txt")
+write.table(tab_with_group, file="Filetypes.txt", sep="\t")
 
 ```
 
 
+# Further Elan file statistics
 
-The ELAN parts:
+For this section, CheckR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: `https://github.com/dalejbarr/elan`. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but CheckR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as CheckR is used as a sanity check for users and depositors of collections. 
 
-CheckR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: https://github.com/dalejbarr/elan. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but CheckR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as CheckR is used as a sanity check for users and depositors of collections. For further uses of Barr's code functions, please follow the documentation from the linked Github repository.
+For further uses of Barr's code functions, please follow the documentation from the linked Github repository.
 
 ```{r}
 # This pulls the functions directly from the github repo.
