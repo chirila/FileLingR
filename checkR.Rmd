@@ -229,7 +229,7 @@ sprintf("You have %d total audio files.", x2)
 fnames_audio
 ```
 
-## Missing audio files
+## Missing Elan files
 The next block of code checks to see how many audio files are missing .eaf/ELAN files (in .eaf format).
 
 ```{r}
