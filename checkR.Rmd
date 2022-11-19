@@ -362,6 +362,6 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 
 # For bugs, feature requests, etc
 
-Please submit issues (bug reports or requests for new features) at https://github.com/chirila/archive-audit/issues/ 
+Please submit issues (bug reports or requests for new features) at https://github.com/chirila/checkR/issues/ 
 
 
