@@ -30,13 +30,18 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 ```{r eval=FALSE, echo=FALSE}
-install.packages("plyr")
-install.packages("magrittr") # package installations are only needed the first time you use it
-install.packages("dplyr")    # alternative installation of the %>%
-install.packages("reticulate")
+
+
+## For Elan file parsing (currently commented out packages are for code that isn't implemented)
+#install.packages("plyr")
+#install.packages("magrittr") # package installations are only needed the first time you use it
+#install.packages("dplyr")    # alternative installation of the %>%
+#install.packages("reticulate")
+#install.packages("tools")
+
 install.packages("devtools")
 devtools::install_github("dalejbarr/elan", force = TRUE)
-install.packages("tools")
+
 install.packages("xfun")
 install.packages("yaml")
 ```
@@ -45,12 +50,13 @@ This chunk loads the packages you'll need.
 
 ```{r message=FALSE}
 #if packages are already installed, you can just run this chunk before you run the following parts of the code
-library(plyr)
-library(magrittr) # needs to be run every time you start R and want to use %>%
-library(dplyr) 
-library(reticulate)
-library(devtools)
-library(tools)
+#library(plyr)
+#library(magrittr) # needs to be run every time you start R and want to use %>%
+#library(dplyr) 
+#library(reticulate)
+#library(devtools)
+#library(tools)
+
 library(xfun)
 library(yaml) #for writing to text files
 ```
