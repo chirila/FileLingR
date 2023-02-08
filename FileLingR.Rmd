@@ -1,17 +1,17 @@
 ---
-title: "CheckR: A User-Friendly Collection Validation Script for Depositors and Users"
+title: "FileLingR: A User-Friendly Collection Validation Script for Depositors and Users"
 author: "Irene Yi, Claire Bowern"
-date: "9/3/2022"
+date: "Feb/8/2023"
 output: word_document
 ---
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
 # Introduction
-Welcome to `CheckR:` A User-Friendly Collection Validation Script for Depositors and Users. This tool is designed to function as a sanity check for depositors and users of digital language collections. We have included comments (noted by a "#" symbol in front of the associated comment line) to help you understand the function of each part of the code, as well as be able to edit the lines of code in very simple ways to choose what functions' outputs you do or do not want to see in a given run of the code.
+Welcome to `FileLingR:` A User-Friendly Collection Validation Script for Depositors and Users. This tool is designed to function as a sanity check for depositors and users of digital language collections. We have included comments (noted by a "#" symbol in front of the associated comment line) to help you understand the function of each part of the code, as well as be able to edit the lines of code in very simple ways to choose what functions' outputs you do or do not want to see in a given run of the code.
 
 ## Setup
-First, set the `fileroot` - that's the folder that you want to analyze. This chunk also sets some R options.  Your "fileroot" will be your file path to your collection folder. In this example, it is `/Users/person/Downloads/toyfiles` because the example collection I am using, a folder called "toyfiles", is located in my computer's downloads folder. You will replace the part within the quotes " " with your own file path. Note that if you are using a Windows computer, you'll need to use something like `c:\\users\person\Downloads`. You should also specify where you want to save the summary files that this script creates. The default is the same directory as the markdown file.
+First, set the `fileroot` - that's the folder that you want to analyze. This chunk also sets some R options.  Your "fileroot" will be your file path to your collection folder. In this example, it is `/Users/xxx/path.to.files`. You will replace the part within the quotes " " with your own file path. Note that if you are using a Windows computer, you'll need to use something like `c:\\users\person\Downloads`. You should also specify where you want to save the summary files that this script creates. The default is the same directory as the markdown file.
 
 
 ```{r setup}
@@ -297,7 +297,7 @@ write.table(tab_with_group, file="Filetypes.txt", sep="\t")
 
 ##Load Elan functions
 
-For this section, CheckR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: `https://github.com/dalejbarr/elan`. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but CheckR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as CheckR is used as a sanity check for users and depositors of collections. 
+For this section, FileLingR borrows functions written by Dale Barr (https://github.com/dalejbarr), which have been compiled into a public Github repository that can be found here: `https://github.com/dalejbarr/elan`. An accompanying piece of R code, titled "functions.R", can be downloaded from the Github repo and should be run before running the following chunks of code. Barr's code allows for further analysis of ELAN tiers and data, but FileLingR is merely using surface functions of Barr's code to extract basic information about ELAN tiers for specific EAF files, as FileLingR is used as a sanity check for users and depositors of collections. 
 
 For further uses of Barr's code functions, please follow the documentation from the linked Github repository.
 
@@ -362,6 +362,6 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 
 # For bugs, feature requests, etc
 
-Please submit issues (bug reports or requests for new features) at https://github.com/chirila/checkR/issues/ 
+Please submit issues (bug reports or requests for new features) at https://github.com/chirila/FileLingR/issues/ 
 
 

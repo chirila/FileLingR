@@ -1,4 +1,4 @@
-This archive has scripts for working with linguistic fieldwork archival collections. It is a set of sanity checks for files. It is meant mostly for fieldworkers who already have documentation collections and want to check what is in the folders, what's missing, or what's inconsistent in file naming conventions. 
+This archive has scripts for working with linguistic fieldwork archival collections. It is a set of checks for files. It is meant mostly for fieldworkers who already have documentation collections and want to check what is in the folders, what's missing, or what's inconsistent in file naming conventions. 
 
 We are very happy to collaborate! And we'd like to know about features that would be useful.
 
