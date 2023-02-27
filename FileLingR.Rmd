@@ -313,6 +313,60 @@ source("dalejbarr_functions.R")
 
 ```
 
+## Look for unique characters in Elan file tiers
+
+This will give you a list of the unique characters in a particular Elan tier (useful for checking if notes like XX and ?? are left over in transcripts).
+
+```{r}
+# Specify the path to the .eaf file
+file_path <- "/path/to/file"
+
+# Read the .eaf file
+eaf_file <- import_eaf(file_path)
+
+# Get the names of the tiers in the file
+tier_names <- eaf_file@tiers
+
+tier_names$name
+
+# Specify the name of the tier to check for the language in
+target_tier_name <- "English translations"
+
+
+# Check if the specified tier exists in the file
+if (target_tier_name %in% tier_names$name) {
+  # Get the annotations for the specified tier
+  annotations <- eaf_file@annotations
+  
+  tier_annotations <- subset(annotations, annotations$tier.name==target_tier_name)
+
+  # Extract the text of the annotations
+annotation_texts <- print(paste(tier_annotations$content,collapse=' '))
+
+  # Remove any duplicate annotations
+  unique_annotation_texts <- unique(annotation_texts)
+
+  # Split the annotations into individual characters
+  annotation_characters <- strsplit(unique_annotation_texts, "")
+
+  # Flatten the list of character lists into a single list of characters
+  characters <- unlist(annotation_characters)
+
+  # Remove any duplicates
+  unique_characters <- unique(characters)
+
+  # Print the list of unique characters
+  print(sort(unique_characters))
+  write.table(sort(unique_characters), file="Unique_Characters.txt", sep="\t")
+  
+} else {
+  # If the specified tier does not exist, print an error message
+  print(paste("Error: The specified tier '", target_tier_name, "' does not exist in the file."))
+}
+```
+
+
+
 
 ## Parse structure of Elan files
 
@@ -360,13 +414,7 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 ```
 
 
-
-
-
 # For bugs, feature requests, etc
 
 Please submit issues (bug reports or requests for new features) at https://github.com/chirila/FileLingR/issues/ 
-
-
-
 

@@ -2,13 +2,16 @@
 <preferences version="1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/Prefs_v1.1.xsd">
     <pref key="FrameSize">
-        <Object class="java.awt.Dimension">800,600</Object>
+        <Object class="java.awt.Dimension">971,758</Object>
     </pref>
     <pref key="LayoutManager.SelectedTabIndex">
         <Int>7</Int>
     </pref>
     <pref key="LayoutManager.VisibleMultiTierViewer">
         <String>mpi.eudico.client.annotator.viewer.TimeLineViewer</String>
+    </pref>
+    <pref key="WaveFormViewer.ActiveURL">
+        <String>file:///Users/clb3/Documents/GitHub/archive-audit/sample_files/HungarianVP1.wav</String>
     </pref>
     <pref key="MultiTierViewer.ActiveTierName">
         <String>Transcription</String>
@@ -51,6 +54,7 @@
             <Int>75</Int>
         </pref>
     </prefGroup>
+    <prefGroup key="TierFonts"/>
     <prefList key="CommentViewer.Columns.Order">
         <String>Start Time</String>
         <String>End Time</String>
@@ -84,7 +88,7 @@
         </pref>
     </prefGroup>
     <pref key="TimeScaleBeginTime">
-        <Long>2580</Long>
+        <Long>2320</Long>
     </pref>
     <pref key="MediaTime">
         <Long>8759</Long>
@@ -104,6 +108,7 @@
         <String>comments</String>
         <String>Speaker</String>
     </prefList>
+    <prefGroup key="TierHighlightColors"/>
     <pref key="LayoutManager.SplitPaneDividerLocation">
         <Int>70</Int>
     </pref>

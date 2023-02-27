@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-02-26T20:43:52-05:00"
+<ANNOTATION_DOCUMENT AUTHOR="" DATE="2023-02-26T21:20:12-05:00"
     FORMAT="3.0" VERSION="3.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
     <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
@@ -882,8 +882,8 @@
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
     </TIER>
-    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Translation"
-        PARENT_REF="Transcription" TIER_ID="English translations">
+    <TIER DEFAULT_LOCALE="en" LANG_REF="eng"
+        LINGUISTIC_TYPE_REF="Translation" PARENT_REF="Transcription" TIER_ID="English translations">
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a82"
                 TIME_SLOT_REF1="ts4" TIME_SLOT_REF2="ts6">
@@ -1347,7 +1347,7 @@
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
     </TIER>
-    <TIER ANNOTATOR="CB" DEFAULT_LOCALE="en"
+    <TIER ANNOTATOR="CB" DEFAULT_LOCALE="en" LANG_REF="hun"
         LINGUISTIC_TYPE_REF="Hungarian" PARENT_REF="Transcription"
         PARTICIPANT="VP" TIER_ID="Hungarian">
         <ANNOTATION>
@@ -1686,7 +1686,8 @@
             </REF_ANNOTATION>
         </ANNOTATION>
     </TIER>
-    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="comments" TIER_ID="comments">
+    <TIER DEFAULT_LOCALE="en" LANG_REF="eng"
+        LINGUISTIC_TYPE_REF="comments" TIER_ID="comments">
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a222"
                 TIME_SLOT_REF1="ts8" TIME_SLOT_REF2="ts10">
@@ -2216,6 +2217,10 @@
     <LOCALE COUNTRY_CODE="US" LANGUAGE_CODE="en"/>
     <LANGUAGE LANG_DEF="http://cdb.iso.org/lg/CDB-00130975-001"
         LANG_ID="und" LANG_LABEL="undetermined (und)"/>
+    <LANGUAGE LANG_DEF="http://cdb.iso.org/lg/CDB-00138526-001"
+        LANG_ID="hun" LANG_LABEL="Hungarian (hun)"/>
+    <LANGUAGE LANG_DEF="http://cdb.iso.org/lg/CDB-00138502-001"
+        LANG_ID="eng" LANG_LABEL="English (eng)"/>
     <CONSTRAINT
         DESCRIPTION="Time subdivision of parent annotation's time interval, no time gaps allowed within this interval" STEREOTYPE="Time_Subdivision"/>
     <CONSTRAINT
