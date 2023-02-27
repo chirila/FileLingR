@@ -413,6 +413,63 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 
 ```
 
+## Check language in tier:
+
+```{r}
+# Load the required packages
+library(act)
+library(textcat)
+
+# Specify the path to the .eaf file
+file_path <- "path/to/file.eaf"
+
+# Read the .eaf file
+eaf_file <- import_eaf(file_path)
+
+# Get the names of the tiers in the file
+tier_names <- eaf_file@tiers
+
+tier_names$name
+
+# Specify the name of the tier to check for the language in
+target_tier_name <- "English translations"
+
+
+# Specify the language to look for
+target_language <- "English"
+
+# Check if the specified tier exists in the file
+if (target_tier_name %in% tier_names$name) {
+  # Get the annotations for the specified tier
+  annotations <- eaf_file@annotations
+  tier_annotations <- subset(annotations, annotations$tier.name==target_tier_name)
+
+
+  # Extract the text of the annotations
+ annotation_texts <- print(paste(tier_annotations$content,collapse=' '))
+
+
+ 
+  # Use the language model to predict the language of the text
+ predicted_language <- textcat(annotation_texts)
+
+  # Check if the predicted language matches the target language
+  if (predicted_language == target_language) {
+    # If the language matches, print a message
+    print(paste("The language '", target_language, "' was found in tier '", target_tier_name, "'."))
+    
+  } else {
+    # If the language does not match, print a message
+    print(paste("The language '", target_language, "' was not found in tier '", target_tier_name, "'."))
+    print(paste("The language '", predicted_language, "' was found in tier '", target_tier_name, "'."))
+  }
+} else {
+  # If the specified tier does not exist, print an error message
+  print(paste("Error: The specified tier '", target_tier_name, "' does not exist in the file."))
+}
+
+
+```
 
 # For bugs, feature requests, etc
 
