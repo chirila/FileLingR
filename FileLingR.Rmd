@@ -15,7 +15,8 @@ First, set the `fileroot` - that's the folder that you want to analyze. This chu
 
 
 ```{r setup}
-fileroot = c("/Users/xxx/path.to.files") #### Change this
+#fileroot = c("/Users/xxx/path.to.files") #### Change this
+fileroot = c("/Users/clb3/Documents/GitHub/archive-audit/sample_files")
 
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org"
@@ -40,7 +41,7 @@ knitr::opts_chunk$set(echo = FALSE)
 #install.packages("tools")
 
 install.packages("devtools")
-devtools::install_github("chirila/dalejbarr-elan", force = TRUE)
+devtools::install_github("chirila/dalejbarr-elan", force = TRUE) ## forked from dalejbarr/elan 's files which have not recently been updated
 
 install.packages("xfun")
 install.packages("yaml")
@@ -50,10 +51,10 @@ This chunk loads the packages you'll need.
 
 ```{r message=FALSE}
 #if packages are already installed, you can just run this chunk before you run the following parts of the code
-#library(plyr)
-#library(magrittr) # needs to be run every time you start R and want to use %>%
-#library(dplyr) 
-#library(reticulate)
+library(plyr)
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr) 
+library(reticulate)
 #library(devtools)
 #library(tools)
 
@@ -360,8 +361,12 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 
 
 
+
+
 # For bugs, feature requests, etc
 
 Please submit issues (bug reports or requests for new features) at https://github.com/chirila/FileLingR/issues/ 
+
+
 
 
