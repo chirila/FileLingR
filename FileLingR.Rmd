@@ -16,7 +16,6 @@ First, set the `fileroot` - that's the folder that you want to analyze. This chu
 
 ```{r setup}
 #fileroot = c("/Users/xxx/path.to.files") #### Change this
-fileroot = c("/Users/clb3/Documents/GitHub/archive-audit/sample_files")
 
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org"
@@ -60,6 +59,9 @@ library(reticulate)
 
 library(xfun)
 library(yaml) #for writing to text files
+
+library(act)
+library(cld2)
 ```
 
 # Read in directory and list files
@@ -416,12 +418,10 @@ yaml::write_yaml(tiers, paste(with_audio[i], ".txt", sep=""))
 ## Check language in tier:
 
 ```{r}
-# Load the required packages
-library(act)
-library(textcat)
 
 # Specify the path to the .eaf file
-file_path <- "path/to/file.eaf"
+file_path <- "/path/to/file.eaf"
+
 
 # Read the .eaf file
 eaf_file <- import_eaf(file_path)
@@ -436,7 +436,7 @@ target_tier_name <- "English translations"
 
 
 # Specify the language to look for
-target_language <- "English"
+target_language <- "en"
 
 # Check if the specified tier exists in the file
 if (target_tier_name %in% tier_names$name) {
@@ -451,7 +451,7 @@ if (target_tier_name %in% tier_names$name) {
 
  
   # Use the language model to predict the language of the text
- predicted_language <- textcat(annotation_texts)
+ predicted_language <- detect_language(annotation_texts)
 
   # Check if the predicted language matches the target language
   if (predicted_language == target_language) {
