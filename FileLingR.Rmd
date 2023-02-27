@@ -15,7 +15,7 @@ First, set the `fileroot` - that's the folder that you want to analyze. This chu
 
 
 ```{r setup}
-fileroot = c("/Users/xxx/path.to.files")
+fileroot = c("/Users/xxx/path.to.files") #### Change this
 
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org"
@@ -40,7 +40,7 @@ knitr::opts_chunk$set(echo = FALSE)
 #install.packages("tools")
 
 install.packages("devtools")
-devtools::install_github("dalejbarr/elan", force = TRUE)
+devtools::install_github("chirila/dalejbarr-elan", force = TRUE)
 
 install.packages("xfun")
 install.packages("yaml")
